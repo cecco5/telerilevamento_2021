@@ -8,3 +8,6 @@ plot(image)   #stampo l'immagine
 
 cl <- colorRampPalette(c("black","grey","light grey")) (100)    #permette di cambiare i colori di un raster, in questo caso dal nero al grigio chiaro. cl è un array di 100 posizioni con colori che variano da nero a grigio chiaro
 plot(image, col=cl)   #stampo il raster con i nuovi colori
+
+cl2 <- colorRampPalette(c("blue","green","magenta","yellow")) (100)
+plot(image, col=cl2)    #col è uno dei tanti argomenti di plot per assegnare un array di colori
