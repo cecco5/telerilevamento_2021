@@ -1,0 +1,7 @@
+# My first code in R for remote sensing!
+
+install.packages("raster")    #installo il pacchetto raster
+library(raster)   #carico il pacchetto raster con le sue funzioni 
+setwd("C:/lab")   #setto la cartella di lavoro in R
+image <- brick("HARV_chmCrop.tif")   #importo i dati di lavoro in R che genera un oggetto RasterBrick dal file
+plot(image)   #stampo l'immagine
