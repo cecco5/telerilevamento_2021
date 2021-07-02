@@ -1,7 +1,10 @@
 # My first code in R for remote sensing!
 
-install.packages("raster")    #installo il pacchetto raster
+# install.packages("raster")    #installo il pacchetto raster
 library(raster)   #carico il pacchetto raster con le sue funzioni 
 setwd("C:/lab")   #setto la cartella di lavoro in R
 image <- brick("HARV_chmCrop.tif")   #importo i dati di lavoro in R che genera un oggetto RasterBrick dal file
 plot(image)   #stampo l'immagine
+
+cl <- colorRampPalette(c("black","grey","light grey")) (100)    #permette di cambiare i colori di un raster, in questo caso dal nero al grigio chiaro. cl è un array di 100 posizioni con colori che variano da nero a grigio chiaro
+plot(image, col=cl)   #stampo il raster con i nuovi colori
