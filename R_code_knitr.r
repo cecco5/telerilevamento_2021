@@ -10,3 +10,5 @@ stitch("rcode_greenland.r", template=system.file("misc", "knitr-template.Rnw", p
 #la funzione prende in input uno script salvato sulla wd e genera in output due file di report:
 # file.tex
 # file.pdf
+
+#RICORDA: stitch inserisce le immagini del file all'interno di una cartella "figure" in lab, per cui su overleaf, per compilare il file TeX bisogna prima creare anche lì una cartella figure su cui caricare tali immagini dal pc
