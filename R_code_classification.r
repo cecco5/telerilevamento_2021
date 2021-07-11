@@ -33,6 +33,41 @@ gulf_cl <- unsuperClass(gulf,nClasses=20)
 
 plot(gulf_cl$map)
 
-### GRAND CANYON
+### GRAND CANYON: John Wesley Powell expedition in 1869
 #problema nuvole: strati mask -> maschere usate per rimuovere gli errori. mask è un raster aggiuntivo da sottrarre all'originale per eliminare rumore (tipo le nuvole), andandolo a dichiarare nella documentazione
 #altrimenti si usano sensori diversi, non passivi
+
+gc <- brick("dolansprings_oli_2013088_canyon_lrg.jpg") #E' un RGB con resolution=30m
+par(mfrow=c(2,1))
+plotRGB(gc,1,2,3,stretch="Lin")
+plotRGB(gc,1,2,3,stretch="hist")
+
+
+#classification
+#2 classi
+gcc_2 <- unsuperClass(gc,nClasses=2)
+cls<-colorRampPalette(c("yellow","red")) (100)
+plot(gc_class$map)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
