@@ -74,7 +74,10 @@ levelplot(copNDVI)
 
 #VEDO CHE LA VARIABILITA' MAGGIORE SI HA IN CORRISPONDENZA DELLE LATITUDINI DEL NORD EUROPA, E NORD AMERICA SOPRATTUTTO E ALL'EQUATORE. ALL'EQUATORE L'ALTA VARIABILITA' SI SPIEGA PER IL MAGGIOR NUMERO DI ORE DI LUCE
 
-
+#I DESERTI SONO TUTTI SULLA LATITUDINE DEL TROPICO DEL CANCRO, 23 GRADI NORD. QUESTO A CAUSA DEI MOTI DELLE MASSE D'ARIA: la vegetazione molto spinta all'equatore, c'è molta EVAPOTRASPIRAZIONE
+# catturare acqua = evapotraspirazione -> la pianta crea una differenza di pressione: per tirare acqua velocemente, tirando acqua verso le foglie in alto.
+#il vapore che va in aria, carica l'atmosfera. Il vapore condensa e ricade come pioggia sulle foreste. L'aria che resta, scaricata del vapore acqueo e secchissima, si stabilisce in queste zone che sono proprio desertiche.
+#un immenso feedback planetario
 
 
 
