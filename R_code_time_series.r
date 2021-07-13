@@ -14,10 +14,11 @@ setwd("C:/lab/greenland")
 #lst_2015 <- raster("lst_2015.tif")
 
 #invece di importare singolarmente, creiamo una lista di files e poi usiamo lapply per applicare a ogni elemento della lista la funzione raster
+# lapply: input=lista/vettore - output=lista
 rlist <- list.files(pattern="lst")
-import <- lapply(rlist,raster) #importo tutti i raster della lista, import è un oggetto composto dai vari raster importati, che sono ancora però separati
+import <- lapply(rlist,raster) #importo tutti i raster della lista (oggetti RasterLayer), import è un oggetto composto dai vari raster importati, che sono ancora però separati
 
-#adesso raggruppo i raster importati singolarmente con la funzione stack in un unico grande file che chiamiamo TGr.
+#adesso raggruppo i raster importati singolarmente con la funzione stack in un unico grande file che chiamiamo TGr, oggetto RasterStack.
 TGr <- stack(import) #TGr = temperature Groenlandia
 
 #adesso posso plottare il singolo file che contiene tutti i raster
