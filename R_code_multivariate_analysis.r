@@ -41,11 +41,29 @@ p224r63_2011res_PCA <- rasterPCA(p224r63_2011res)
 #per osservare il modello dell'oggetto generato, ne genero un sommario con la funzione summary
 #in questo modo vedo quanta varianza c'è in ciascuna delle bande
 summary(p224r63_2011res_PCA$model)
+#vedo che la prima componente da sola spiega il 99,22% di variabilità
 
 #a questo punto, plottando la map, vedrò che la prima componente, PC1 da sola già contiene "tutta" l'informazione, ovvero il massimo della variabilità. L'ultima, la PC7, quasi nulla
 plot(p224r63_2011res_PCA$map)
 
+#LA PCA QUINDI NON FA ALTRO CHE RIDURRE LA CORRELAZIONE FORTE CHE INTERCORRE INIZIALMENTE TRA LE BANDE. RIDUCE LA DIMENSIONALITA' DELL'INPUT E PERMETTE UNA INTERPRETABILITA' MAGGIORE DEI DATI, SENZA INTRODURRE ERRORE
 
+plotRGB(p224r63_2011res_PCA$map, r=1,g=2,b=3, stretch="lin") #plotRGB dove assegno alla banda del rosso la PC1, del verde la PC2 e al blu la PC3, immagine risultante da analisi PCA
+#la prima componente è quella che contiene più variabilità
+
+#RIPRENDENDO LA CLASSIFICAZIONE, LA PCA E' UTILE PROPRIO PER INDIVIDUARE DIVERSI ELEMENTI NELL'IMMAGINE, RACCOGLIENDO LA MAGGIOR PARTE DELLA VARIABILITA'
+#ad esempio la neve, i pascoli ad alta quota, la vegetazione più fitta a valle ecc...
+#quindi la PCA divide le varie bande spettrali dell'immagine e altri algoritmi accorpano i pixel così differenziati definendo delle classi
+
+#dunque se ho un DATA CUBE (immagine iperspettrale con centinaia di bande a disposizione), posso compattare tutte queste bande in un numero più contenuto per poter poi fare analisi
+
+
+
+#plot una banda contro l'altra
+plot(p224r63_2011res_PCA$map$PC1,p224r63_2011res_PCA$map$PC2)
+#vedo che tra PC1 e PC2 non vi è alcuna correlazione
+
+#FUNZIONE str(filename) -> info sulla struttura e l'intero file
 
 
 
