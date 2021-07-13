@@ -1,6 +1,7 @@
 #R_code_vegetation_indices.r
 
 library(raster)
+library(RStoolbox)
 setwd("C:/lab")
 
 defor1 <- brick("defor1.png")
@@ -34,7 +35,7 @@ cl1 <- colorRampPalette(c("dark blue","yellow","red","black")) (100)
 #ora mi chiedo quale è stata la differenza tra le due epoche
 diff <- dvi1-dvi2
 cl2 <- colorRampPalette(c("blue","white","red")) (100)
-plot(diff,col=cl2,main="DVI difference")
+#plot(diff,col=cl2,main="DVI difference")
 
 #dove la mappa è rossa c'è stata una differenza maggiore (in corrispondenza delle aree agricole), in blu le aree meno cambiate, rimaste vegetazione
 #in questo caso la differenza è ben visibile, deforestazione. In altri casi la differenza non è così marcata ed è più difficile da marcare
@@ -42,5 +43,39 @@ plot(diff,col=cl2,main="DVI difference")
 #SE DOBBIAMO USARE IMMAGINI CON UNA RISOLUZIONE DIVERSA, USIAMO L'NDVI CHE E' NORMALIZZATO
 #ndvi = (NIR - RED) / (NIR + RED) che ha un valore -1<=NDVI<=+1
 ndvi1 <- (defor1$defor1.1 - defor1$defor1.2)/(defor1$defor1.1 + defor1$defor1.2)
-plot(ndvi1, col = cl1, main = "NDVI at time1")
+#plot(ndvi1, col = cl1, main = "NDVI at time1")
+
+ndvi2 <- (defor2$defor2.1 - defor2$defor2.2)/(defor2$defor2.1 + defor2$defor2.2)
+
+NDVI_diff <- ndvi1-ndvi2
+plot(NDVI_diff,col=cl2,main="NDVI difference")
+
+# FUNZIONE SPECTRAL INDICES: l'output è un oggetto RasterBrick , quindi multibanda nelle 3 bande di prima
+#l'output è composto da molti indici tra cui DVI e NDVI -> BELLA ROBA
+vi1 <- spectralIndices(defor1, green=3, red=2, nir=1)
+#plot(vi,col=cl1)
+
+vi2 <- spectralIndices(defor2,green=3, red=2, nir=1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
