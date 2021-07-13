@@ -40,7 +40,7 @@ plot(diff,col=cl2,main="DVI difference")
 #in questo caso la differenza è ben visibile, deforestazione. In altri casi la differenza non è così marcata ed è più difficile da marcare
 
 #SE DOBBIAMO USARE IMMAGINI CON UNA RISOLUZIONE DIVERSA, USIAMO L'NDVI CHE E' NORMALIZZATO
-#ndvi = (NIR - RED) / (NIR + RED) 
+#ndvi = (NIR - RED) / (NIR + RED) che ha un valore -1<=NDVI<=+1
 ndvi1 <- (defor1$defor1.1 - defor1$defor1.2)/(defor1$defor1.1 + defor1$defor1.2)
 plot(ndvi1, col = cl1, main = "NDVI at time1")
 
