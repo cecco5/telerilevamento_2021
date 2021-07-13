@@ -1,7 +1,10 @@
 #R_code_vegetation_indices.r
 
 library(raster)
-library(RStoolbox)
+library(rasterVis)
+library(RStoolbox) #per il calcolo degli indici di vegetazione
+#install.packages("rasterdiv")
+library(rasterdiv) #per l'NDVI globale
 setwd("C:/lab")
 
 defor1 <- brick("defor1.png")
@@ -48,7 +51,7 @@ ndvi1 <- (defor1$defor1.1 - defor1$defor1.2)/(defor1$defor1.1 + defor1$defor1.2)
 ndvi2 <- (defor2$defor2.1 - defor2$defor2.2)/(defor2$defor2.1 + defor2$defor2.2)
 
 NDVI_diff <- ndvi1-ndvi2
-plot(NDVI_diff,col=cl2,main="NDVI difference")
+#plot(NDVI_diff,col=cl2,main="NDVI difference")
 
 # FUNZIONE SPECTRAL INDICES: l'output è un oggetto RasterBrick , quindi multibanda nelle 3 bande di prima
 #l'output è composto da molti indici tra cui DVI e NDVI -> BELLA ROBA
@@ -56,6 +59,19 @@ vi1 <- spectralIndices(defor1, green=3, red=2, nir=1)
 #plot(vi,col=cl1)
 
 vi2 <- spectralIndices(defor2,green=3, red=2, nir=1)
+
+#WORLDWIDE NDVI
+plot(copNDVI)
+
+
+#Pixels with values 253, 254 and 255 (water) will be set as NA’s.
+#togliamo la parte dell'acqua usando la funzione reclassify
+copNDVI <- reclassify(copNDVI, cbind(252:255, NA))
+#plot(copNDVI)
+
+#usiamo levelplot del pacchetto rasterVis
+levelplot(copNDVI)
+
 
 
 
