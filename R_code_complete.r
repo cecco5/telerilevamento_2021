@@ -176,7 +176,7 @@ dev.off()
 #------------------------------------------#
 
 # 2. R code time series
-
+   
 
 #time series analysis
 #Greenland increase of temperature
