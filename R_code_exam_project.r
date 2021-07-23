@@ -13,5 +13,16 @@
 setwd("C:/lab/esame")
 library(raster)
 
-image <- brick("E000N60_PROBAV_LC100_global_v3.0.1_2015-base_Discrete-Classification-map_EPSG-4326.tif")
-plot(image)
+# LANDSTA IMAGES
+# B2 BLUE
+# B3 GREEN
+# B4 RED
+# B5 NIR
+b2 <- brick("LC08_L2SP_192030_20130616_20200912_02_T1_SR_B2.TIF")
+b3 <- brick("LC08_L2SP_192030_20130616_20200912_02_T1_SR_B3.TIF")
+b4 <- brick("LC08_L2SP_192030_20130616_20200912_02_T1_SR_B4.TIF")
+b5 <- brick("LC08_L2SP_192030_20130616_20200912_02_T1_SR_B5.TIF")
+
+rlist <- list(b2,b3,b4,b5)
+image <- stack(rlist)
+plot(image$LC08_L2SP_192030_20130616_20200912_02_T1_SR_B5)
