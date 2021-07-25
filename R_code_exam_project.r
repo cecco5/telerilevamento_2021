@@ -4,25 +4,46 @@
 #PROGETTO ESAME FINALE TELERILEVAMENTO GEOECOLOGICO
 
 # Summary
-#1  Scaricamento immagini satellitari, riferite a due periodi diversi nel tempo : Copernicus - Sentinel 2
+#1  Scaricamento + IMPORT immagini satellitari Toscana, dati Landsat 8 OLI-TIRS Collection2 Livello2
 #2  
 
 #---------------------------------------
-#1 DOWNLOAD
+#1 IMPORTAZIONE IMMAGINI TOSCANA TELERILEVATE DA SISTEMA LANDSAT 8 
 
 setwd("C:/lab/esame")
+
 library(raster)
 
-# LANDSTA IMAGES
-# B2 BLUE
-# B3 GREEN
-# B4 RED
-# B5 NIR
-b2 <- brick("LC08_L2SP_192030_20130616_20200912_02_T1_SR_B2.TIF")
-b3 <- brick("LC08_L2SP_192030_20130616_20200912_02_T1_SR_B3.TIF")
-b4 <- brick("LC08_L2SP_192030_20130616_20200912_02_T1_SR_B4.TIF")
-b5 <- brick("LC08_L2SP_192030_20130616_20200912_02_T1_SR_B5.TIF")
+#2014
+list2014 <- list.files(pattern="20140806")
+s2014 <- stack(list2014) #raster multibanda 2014, oggetto RasterStack
+#plotRGB(s2014,4,3,2,stretch="hist") funziona
 
-rlist <- list(b2,b3,b4,b5)
-image <- stack(rlist)
-plot(image$LC08_L2SP_192030_20130616_20200912_02_T1_SR_B5)
+#2015
+list2015 <- list.files(pattern="20150910")
+s2015 <- stack(list2015)
+
+#2016
+list2016 <- list.files(pattern="20161030")
+s2016 <- stack(list2016)
+
+#2017
+list2017 <- list.files(pattern="20170814")
+s2017 <- stack(list2017)
+
+#2018
+list2018 <- list.files(pattern="20180427")
+s2018 <- stack(list2018)
+
+#2019
+list2019 <- list.files(pattern="20190820")
+s2019 <- stack(list2019)
+
+#2020
+list2020 <- list.files(pattern="20200822")
+s2020 <- stack(list2020)
+
+#2021
+list2021 <- list.files(pattern="20210302")
+s2021 <- stack(list2021)
+
