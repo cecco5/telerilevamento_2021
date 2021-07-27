@@ -5,18 +5,36 @@
 
 # Summary
 #1  Scaricamento + IMPORT immagini satellitari Toscana, dati Landsat 8 OLI-TIRS Collection2 Livello2
-#2  
+#2  Classificazione land cover attraverso package RStoolbox supervised e unsupervised classification methods
+#3  Qualità classificazioni e confronto
+#4  NDVI analisi multitemporale
+
 
 #---------------------------------------
-#1 IMPORTAZIONE IMMAGINI TOSCANA TELERILEVATE DA SISTEMA LANDSAT 8 
+ 
 
 setwd("C:/lab/esame")
 
 library(raster)
+libraty(RStoolbox) #per la classificazione
+
+
+
+#1 IMPORTAZIONE IMMAGINI TOSCANA TELERILEVATE DA SISTEMA LANDSAT 8 OLI-TIRS COLLECTION 2 LEVEL 2
+
+
+# Bande Landsat
+# B1: blu
+# B2: verde
+# B3: rosso
+# B4: infrarosso vicino
+# B5: infrarosso medio
+# B6: infrarosso termico
+# B7: infrarosso medio
 
 #2014
 list2014 <- list.files(pattern="20140806")
-s2014 <- stack(list2014) #raster multibanda 2014, oggetto RasterStack
+s2014 <- stack(list2014)                                        #raster multibanda 2014, oggetto RasterStack
 #plotRGB(s2014,4,3,2,stretch="hist") funziona
 
 #2015
