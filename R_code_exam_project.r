@@ -77,7 +77,7 @@ s2021 <- stack(list2021)
 
 #------------------------------------------------------------------------------------#
 
-# 2.1 Unsupervised classification with unsuperClass function
+# 2.1 Unsupervised classification with unsuperClass function: non assegno un valore ai pixel per determinare le classi ma il software raggruppa gruppi di pixel con valori di riflettanza simili
 
 #plotRGB(s2014,4,3,2,stretch="hist") 
 #e <- drawExtent(show=TRUE, col="red") #estensione area di Rosignano Marittimo (LI), oggetto Extent
@@ -121,7 +121,7 @@ pca_2014 <- rasterPCA(Rosignano2014)
 pca12_2014 <- pca_2014$map$PC1+pca_2014$map$PC2 # Comp.1 + Comp.2 = 98.5% of variability
 #levelplot(pca12_2014)
 
-#UNSUPERVISED CLASSIFICATION: 3 CLASSI E 6 CLASSI 
+#unspurvised classification
 set.seed(50)
 class2014_3 <- unsuperClass(pca12_2014, nClasses=3) #3 classi per distinguere intanto mare, zone antropizzate e aree verdi.
 
