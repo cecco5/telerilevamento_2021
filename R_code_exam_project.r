@@ -13,6 +13,7 @@
 #----------------------------------------------------------------
  
 
+
 setwd("C:/lab/esame")
 
 library(raster)
@@ -20,6 +21,7 @@ library(RStoolbox) #per la classificazione
 library(ggplot2)
 library(gridExtra)
 library(viridis)
+library(rasterVis)
 
 
 
@@ -27,18 +29,18 @@ library(viridis)
 
 
 # Bande Landsat
-# B1: blu
-# B2: verde
-# B3: rosso
-# B4: infrarosso vicino
-# B5: infrarosso medio
-# B6: infrarosso termico
-# B7: infrarosso medio
+# B1: CA
+# B2: BLU
+# B3: VERDE
+# B4: ROSSO
+# B5: NIR
+# B6: SWIR
+# B7: SWIR
 
 #2014
 list2014 <- list.files(pattern="20140806")
 s2014 <- stack(list2014)                                        #raster multibanda 2014, oggetto RasterStack
-#plotRGB(s2014,4,3,2,stretch="hist") funziona
+
 
 
 #2015
@@ -77,30 +79,49 @@ s2021 <- stack(list2021)
 
 # 2.1 unsupervised classification with unsuperClass function
 
-# unsuperClass classification based on kmeans algorithm
-# Per cogliere il massimo della variabilità dai nostri dati operiamo una PCA rispettivamente su set 2014 e 2021
-pca_2014 <- rasterPCA(s2014)
-
-#> summary(pca_2014$model)
-#Importance of components:
-#                             Comp.1       Comp.2       Comp.3       Comp.4 ....
-#Standard deviation     7670.7027040 3520.1605260 1.898809e+03 4.330130e+02
-#Proportion of Variance    0.7833149    0.1649647 4.799861e-02 2.496135e-03
-#Cumulative Proportion     0.7833149    0.9482796 9.962782e-01 9.987744e-01
-
-
-set.seed(30)
-pca12_2014 <- pca_2014$map$PC1+pca_2014$map$PC2 # c1 + c2 = 94% of variability
-class2014 <- unsuperClass(pca12, nClasses=7)
-# plot(class2014$map)
-
-e <- drawExtent(show=TRUE, col="red") #estensione area di Rosignano Marittimo (LI), oggetto Extent
+#plotRGB(s2014,4,3,2,stretch="hist") 
+#e <- drawExtent(show=TRUE, col="red") #estensione area di Rosignano Marittimo (LI), oggetto Extent
 #> e
 #class      : Extent
-#xmin       : 611550.9
-#xmax       : 623497.3
-#ymin       : 4804117
-#ymax       : 4809851
+#xmin       : 612410.9
+#xmax       : 617274
+#ymin       : 4804437
+#ymax       : 4810342
 
-class2014_crop <- crop(class2014$map,e)
+e <- extent(612410.9,617274,4804437,4810342) #estensione area di Rosignano
+
+#raster Rosignano 
+Rosignano2014 <- crop(s2014,e)
+#plotRGB(Rosignano2014,4,3,2,stretch="hist")
+
+# unsuperClass classification based on kmeans algorithm
+# Per cogliere il massimo della variabilità dai nostri dati operiamo una PCA
+set.seed(30)
+pca_2014 <- rasterPCA(Rosignano2014)
+#summary(pca_2014$model)
+#plot(pca_2014$map)
+pca12_2014 <- pca_2014$map$PC1+pca_2014$map$PC2 # pc1 + pc2 = 98.5% of variability
+#levelplot(pca12_2014)
+
+#UNSUPERVISED CLASSIFICATION: 3 CLASSI E 6 CLASSI 
+class2014_3 <- unsuperClass(pca12_2014, nClasses=3) #3 classi per distinguere intanto mare, zone antropizzate e aree verdi
+#par(mfrow=c(1,2))
+#plotRGB(Rosignano2014,4,3,2,stretch="hist")
+#plot(class2014$map)
+
+#Dal confronto con l'immagine RGB si apprezza la differenziazione delle 3 classi, notando anche la presenza di 3 specchi d'acqua non individuabili altrimenti.
+#Aumentando il numero di classi della funzione, è possibile osservare come l'algoritmo riesca a individuare più elementi, tra cui una diversificazione maggiore della vegetazione
+
+class_2014_6 <- unsuperClass(pca12_2014,nClasses=6)
+#par(mfrow=c(1,2))
+#plotRGB(Rosignano2014,4,3,2,stretch="hist")
+#plot(class_2014_6$map)
+
+
+
+
+
+
+
+
 
