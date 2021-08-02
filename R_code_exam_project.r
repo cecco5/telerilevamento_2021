@@ -77,7 +77,7 @@ s2021 <- stack(list2021)
 
 #------------------------------------------------------------------------------------#
 
-# 2.1 unsupervised classification with unsuperClass function
+# 2.1 Unsupervised classification with unsuperClass function
 
 #plotRGB(s2014,4,3,2,stretch="hist") 
 #e <- drawExtent(show=TRUE, col="red") #estensione area di Rosignano Marittimo (LI), oggetto Extent
@@ -90,32 +90,53 @@ s2021 <- stack(list2021)
 
 e <- extent(612410.9,617274,4804437,4810342) #estensione area di Rosignano
 
-#raster Rosignano 
+#raster Rosignano 2014
 Rosignano2014 <- crop(s2014,e)
 #plotRGB(Rosignano2014,4,3,2,stretch="hist")
 
-# unsuperClass classification based on kmeans algorithm
+
+#salviamo il raster su disco, nella directory di lavoro
+writeRaster(Rosignano2014,"Rosignano_landsat8_2014") #estensione .grd e .gri
+
+
+# UnsuperClass classification based on kmeans algorithm
 # Per cogliere il massimo della variabilità dai nostri dati operiamo una PCA
-set.seed(30)
+
 pca_2014 <- rasterPCA(Rosignano2014)
+
+#-----------------------------------------------
 #summary(pca_2014$model)
+#Importance of components:
+#                            Comp.1       Comp.2       Comp.3       Comp.4
+#Standard deviation     6521.9681174 2678.6703259 735.79621060 3.518617e+02
+#Proportion of Variance    0.8428447    0.1421768   0.01072767 2.453208e-03
+#Cumulative Proportion     0.8428447    0.9850214   0.99574911 9.982023e-01
+#                             Comp.5       Comp.6       Comp.7
+#Standard deviation     265.05464657 1.292386e+02 6.137826e+01
+#Proportion of Variance   0.00139207 3.309594e-04 7.464819e-05
+#Cumulative Proportion    0.99959439 9.999254e-01 1.000000e+00
+#------------------------------------------------
+
 #plot(pca_2014$map)
-pca12_2014 <- pca_2014$map$PC1+pca_2014$map$PC2 # pc1 + pc2 = 98.5% of variability
+pca12_2014 <- pca_2014$map$PC1+pca_2014$map$PC2 # Comp.1 + Comp.2 = 98.5% of variability
 #levelplot(pca12_2014)
 
 #UNSUPERVISED CLASSIFICATION: 3 CLASSI E 6 CLASSI 
-class2014_3 <- unsuperClass(pca12_2014, nClasses=3) #3 classi per distinguere intanto mare, zone antropizzate e aree verdi
+set.seed(50)
+class2014_3 <- unsuperClass(pca12_2014, nClasses=3) #3 classi per distinguere intanto mare, zone antropizzate e aree verdi.
+
 #par(mfrow=c(1,2))
 #plotRGB(Rosignano2014,4,3,2,stretch="hist")
 #plot(class2014$map)
 
-#Dal confronto con l'immagine RGB si apprezza la differenziazione delle 3 classi, notando anche la presenza di 3 specchi d'acqua non individuabili altrimenti.
+#Dal confronto con l'immagine RGB si apprezza la differenza tra le 3 classi generate, notando anche la presenza di 3 specchi d'acqua non individuabili altrimenti.
 #Aumentando il numero di classi della funzione, è possibile osservare come l'algoritmo riesca a individuare più elementi, tra cui una diversificazione maggiore della vegetazione
 
-class_2014_6 <- unsuperClass(pca12_2014,nClasses=6)
+class_2014_6 <- unsuperClass(pca12_2014, nClasses=6) #6 classi
 #par(mfrow=c(1,2))
 #plotRGB(Rosignano2014,4,3,2,stretch="hist")
 #plot(class_2014_6$map)
+
 
 
 
