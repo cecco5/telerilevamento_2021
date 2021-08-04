@@ -22,6 +22,7 @@ library(ggplot2)
 library(gridExtra)
 library(viridis)
 library(rasterVis)
+library(rgdal)
 
 
 
@@ -148,7 +149,7 @@ class_2014_6 <- unsuperClass(pca12_2014, nClasses=6) #6 classi
 # macchia mediterranea
 # pino marittimo
 
-library(rgdal)
+#rgdal required
 train.shp <- readOGR(dsn="C:/lab/esame",layer="train_data")
 
 Rosignano2014 <- brick("Rosignano_landsat8_2014.grd")
@@ -176,17 +177,87 @@ plot(train_utm,
 #require(rgdal)
 train.df <- as(train_utm, "data.frame")
 
-#> train.df
-#  id               classe coords.x1 coords.x2
-#1  1                ACQUA  612771.2   4807267
-#2  2    AREA ANTROPIZZATA  615710.4   4805536
-#3  3 MACCHIA MEDITERRANEA  616212.4   4809181
-#4  4         COLTIVAZIONI  614269.9   4808191
-#5  5       PINO MARITTIMO  614502.7   4806860
+#train.df è un training set di 27 punti suddivisi nelle 5 classi
+# area antropizzata
+# coltivazioni
+# acqua
+# macchia mediterranea
+# pino marittimo
+
 
 ## Fit classifier (splitting training into 70\% training data, 30\% validation data)
+#model = random forest
 SC_Rosignano2014       <- superClass(Rosignano2014, trainData = train_utm, responseCol = "classe", 
 model = "rf", tuneLength = 1, trainPartition = 0.7)
+
+#************ Validation **************
+#$validation
+#Confusion Matrix and Statistics
+
+#                      Reference
+#Prediction             ACQUA AREA ANTROPIZZATA COLTIVAZIONI
+#  ACQUA                    1                 0            0
+#  AREA ANTROPIZZATA        0                 1            0
+#   COLTIVAZIONI             0                 0            1
+#   MACCHIA MEDITERRANEA   #   0                 0            0
+#   PINO MARITTIMO         #   0                 0            0
+#                       Ref# erence
+# Prediction             MA# CCHIA MEDITERRANEA PINO MARITTIMO
+#   ACQUA                  #                  0              0
+#   AREA ANTROPIZZATA      #                  0              0
+#   COLTIVAZIONI                            0              0
+#   MACCHIA MEDITERRANEA                     1              1
+#  #  PINO MARITTIMO                         0              0 
+# 
+# Overall Statistics 
+
+#                Accuracy : 0.8
+#                  95% CI : (0.2836, 0.9949)
+#     No Information Rate : 0.2
+#     P-Value [Acc > NIR] : 0.00672
+
+#                   Kappa : 0.75
+# 
+#  Mcnemar's Test P-Value : NA
+
+# Statistics by Class:
+
+#                      Class: ACQUA Class: AREA ANTROPIZZATA Class: COLTIVAZIONI
+# Sensitivity                   1.0                      1.0                 1.0
+# Specificity                   1.0                      1.0                 1.0
+# Pos Pred Value                1.0                      1.0                 1.0
+# Neg Pred Value                1.0                      1.0                 1.0
+# Prevalence                    0.2                      0.2                 0.2
+# Detection Rate                0.2                      0.2                 0.2
+# Detection Prevalence          0.2                      0.2                 0.2
+# Balanced Accuracy             1.0                      1.0                 1.0
+#                      Class: MACCHIA MEDITERRANEA Class: PINO MARITTIMO
+# Sensitivity                                1.000                   0.0
+# Specificity                                0.750                   1.0
+# Pos Pred Value                             0.500                   NaN
+# Neg Pred Value                             1.000                   0.8
+# Prevalence                                 0.200                   0.2
+# Detection Rate                             0.200                   0.0
+# Detection Prevalence                       0.400                   0.0
+# Balanced Accuracy                          0.875                   0.5
+
+# *************** Map ******************
+# $map
+# class      : RasterLayer
+# dimensions : 197, 162, 31914  (nrow, ncol, ncell)
+# resolution : 30, 30  (x, y)
+# extent     : 612405, 617265, 4804425, 4810335  (xmin, xmax, ymin, ymax)
+# crs        : +proj=utm +zone=32 +datum=WGS84 +units=m +no_defs
+# source     : memory
+# names      : classe
+# values     : 1, 5  (min, max)
+# attributes :
+#  ID                value
+#   1                ACQUA
+#   2    AREA ANTROPIZZATA
+#   3         COLTIVAZIONI
+#   4 MACCHIA MEDITERRANEA
+#   5       PINO MARITTIMO
 
 
 
