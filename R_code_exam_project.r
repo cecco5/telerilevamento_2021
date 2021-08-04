@@ -6,7 +6,7 @@
 # Summary
 #1  Scaricamento + IMPORT immagini satellitari Toscana, dati Landsat 8 OLI-TIRS Collection2 Livello2
 #2  Classificazione land cover attraverso package RStoolbox supervised e unsupervised classification methods
-#3  Qualità classificazioni e confronto
+#3  
 #4  NDVI analisi multitemporale
 
 
@@ -17,7 +17,7 @@
 setwd("C:/lab/esame")
 
 library(raster)
-library(RStoolbox) #per la classificazione
+library(RStoolbox)
 library(ggplot2)
 library(gridExtra)
 library(viridis)
@@ -103,6 +103,7 @@ writeRaster(Rosignano2014,"Rosignano_landsat8_2014") #estensione .grd e .gri
 # UnsuperClass classification based on kmeans algorithm
 # Per cogliere il massimo della variabilità dai nostri dati operiamo una PCA
 
+set.seed(50)
 pca_2014 <- rasterPCA(Rosignano2014)
 
 #-----------------------------------------------
@@ -124,25 +125,26 @@ pca12_2014 <- pca_2014$map$PC1+pca_2014$map$PC2 # Comp.1 + Comp.2 = 98.5% of var
 
 #unsupervised classification
 set.seed(50)
-class2014_3 <- unsuperClass(pca12_2014, nClasses=3) #3 classi per distinguere intanto mare, zone antropizzate e aree verdi.
+class2014_3 <- unsuperClass(pca12_2014, nClasses=3) #3 classi per distinguere preliminarmente mare, zone antropizzate e aree verdi.
 
 #par(mfrow=c(1,2))
 #plotRGB(Rosignano2014,4,3,2,stretch="hist")
-#plot(class2014$map)
+#plot(class2014_3$map)
 
 #Dal confronto con l'immagine RGB si apprezza la differenza tra le 3 classi generate, notando anche la presenza di 3 specchi d'acqua non individuabili altrimenti.
 #Aumentando il numero di classi della funzione, è possibile osservare come l'algoritmo riesca a individuare più elementi, tra cui una diversificazione maggiore della vegetazione
-
-class_2014_6 <- unsuperClass(pca12_2014, nClasses=6) #6 classi
+set.seed(50)
+class2014_6 <- unsuperClass(pca12_2014, nClasses=6) #6 classi
 #par(mfrow=c(1,2))
 #plotRGB(Rosignano2014,4,3,2,stretch="hist")
-#plot(class_2014_6$map)
+#plot(class2014_6$map)
 
 #----------------------------------------------------------------------------
-# 2.2 Supervised classification with superClass and train data with Qgis
+# 2.2 Supervised classification with superClass function and train data with Qgis
 
 
-# classificazione: 
+#import shapefile train_data, creato con Qgis 
+#train.shp è un training set di 27 punti suddivisi nelle 5 classi
 # area antropizzata
 # coltivazioni
 # acqua
@@ -152,7 +154,7 @@ class_2014_6 <- unsuperClass(pca12_2014, nClasses=6) #6 classi
 #rgdal required
 train.shp <- readOGR(dsn="C:/lab/esame",layer="train_data")
 
-Rosignano2014 <- brick("Rosignano_landsat8_2014.grd")
+Rosignano2014 <- brick("Rosignano_landsat8_2014.grd") #RasterBrick
 #> crs(Rosignano2014)
 #CRS arguments:
 # +proj=utm +zone=32 +datum=WGS84 +units=m +no_defs
@@ -167,28 +169,26 @@ train_utm <- spTransform(train.shp,crs(Rosignano2014))
 # plot Rosignano2014 con i punti del train_data della classificazione
 plot(Rosignano2014$nir)
 # add train_data to plot
-plot(train_utm,
+points(train_utm,
      pch = 19,
      cex = 2,
-     col = "red",
-     add = TRUE)
+     col = "red")
 
 # il formato dei train data è shapefile (.shp), lo converto in dataframe
 #require(rgdal)
-train.df <- as(train_utm, "data.frame")
-
-#train.df è un training set di 27 punti suddivisi nelle 5 classi
-# area antropizzata
-# coltivazioni
-# acqua
-# macchia mediterranea
-# pino marittimo
+#train.df <- as(train_utm, "data.frame")
 
 
 ## Fit classifier (splitting training into 70\% training data, 30\% validation data)
 #model = random forest
-SC_Rosignano2014       <- superClass(Rosignano2014, trainData = train_utm, responseCol = "classe", 
+set.seed(50)
+SC_Rosignano2014 <- superClass(Rosignano2014, trainData = train_utm, responseCol = "classe", 
 model = "rf", tuneLength = 1, trainPartition = 0.7)
+
+plot(SC_Rosignano2014$map, legend = FALSE, axes = FALSE, box = FALSE)
+legend(1,1, legend = levels(train_utm$class) , title = "Classi", 
+horiz = TRUE,  bty = "n")
+
 
 #************ Validation **************
 #$validation
@@ -198,16 +198,16 @@ model = "rf", tuneLength = 1, trainPartition = 0.7)
 #Prediction             ACQUA AREA ANTROPIZZATA COLTIVAZIONI
 #  ACQUA                    1                 0            0
 #  AREA ANTROPIZZATA        0                 1            0
-#   COLTIVAZIONI             0                 0            1
-#   MACCHIA MEDITERRANEA   #   0                 0            0
-#   PINO MARITTIMO         #   0                 0            0
-#                       Ref# erence
-# Prediction             MA# CCHIA MEDITERRANEA PINO MARITTIMO
-#   ACQUA                  #                  0              0
-#   AREA ANTROPIZZATA      #                  0              0
+#   COLTIVAZIONI            0                 0            1
+#   MACCHIA MEDITERRANEA    0                 0            0
+#   PINO MARITTIMO          0                 0            0
+#                       Reference
+# Prediction             MACCHIA MEDITERRANEA PINO MARITTIMO
+#   ACQUA                                    0              0
+#   AREA ANTROPIZZATA                        0              0
 #   COLTIVAZIONI                            0              0
 #   MACCHIA MEDITERRANEA                     1              1
-#  #  PINO MARITTIMO                         0              0 
+#   PINO MARITTIMO                         0              0 
 # 
 # Overall Statistics 
 
