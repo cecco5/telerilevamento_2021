@@ -121,7 +121,7 @@ pca_2014 <- rasterPCA(Rosignano2014)
 pca12_2014 <- pca_2014$map$PC1+pca_2014$map$PC2 # Comp.1 + Comp.2 = 98.5% of variability
 #levelplot(pca12_2014)
 
-#unspurvised classification
+#unsupervised classification
 set.seed(50)
 class2014_3 <- unsuperClass(pca12_2014, nClasses=3) #3 classi per distinguere intanto mare, zone antropizzate e aree verdi.
 
@@ -137,7 +137,56 @@ class_2014_6 <- unsuperClass(pca12_2014, nClasses=6) #6 classi
 #plotRGB(Rosignano2014,4,3,2,stretch="hist")
 #plot(class_2014_6$map)
 
+#----------------------------------------------------------------------------
+# 2.2 Supervised classification with superClass and train data with Qgis
 
+
+# classificazione: 
+# area antropizzata
+# coltivazioni
+# acqua
+# macchia mediterranea
+# pino marittimo
+
+library(rgdal)
+train.shp <- readOGR(dsn="C:/lab/esame",layer="train_data")
+
+Rosignano2014 <- brick("Rosignano_landsat8_2014.grd")
+#> crs(Rosignano2014)
+#CRS arguments:
+# +proj=utm +zone=32 +datum=WGS84 +units=m +no_defs
+
+#rinomino il nome delle bande del raster
+names(Rosignano2014) <- c("ca","blue","green","red","nir","swir1","swir2")
+
+#train.shp ha un crs=longlat, devo convertire il sr in UTM
+train_utm <- spTransform(train.shp,crs(Rosignano2014))
+
+
+# plot Rosignano2014 con i punti del train_data della classificazione
+plot(Rosignano2014$nir)
+# add train_data to plot
+plot(train_utm,
+     pch = 19,
+     cex = 2,
+     col = "red",
+     add = TRUE)
+
+# il formato dei train data è shapefile (.shp), lo converto in dataframe
+#require(rgdal)
+train.df <- as(train_utm, "data.frame")
+
+#> train.df
+#  id               classe coords.x1 coords.x2
+#1  1                ACQUA  612771.2   4807267
+#2  2    AREA ANTROPIZZATA  615710.4   4805536
+#3  3 MACCHIA MEDITERRANEA  616212.4   4809181
+#4  4         COLTIVAZIONI  614269.9   4808191
+#5  5       PINO MARITTIMO  614502.7   4806860
+
+## Fit classifier (splitting training into 70\% training data, 30\% validation data)
+SC_Rosignano2014       <- superClass(Rosignano2014, trainData = train_utm, responseCol = "classe", 
+model = "rf", tuneLength = 1, trainPartition = 0.7)
 
 
 
