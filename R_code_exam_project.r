@@ -185,9 +185,9 @@ set.seed(50)
 SC_Rosignano2014 <- superClass(Rosignano2014, trainData = train_utm, responseCol = "classe", 
 model = "rf", tuneLength = 1, trainPartition = 0.7)
 
-plot(SC_Rosignano2014$map, legend = FALSE, axes = FALSE, box = FALSE)
-legend(1,1, legend = levels(train_utm$class) , title = "Classi", 
-horiz = TRUE,  bty = "n")
+#plot(SC_Rosignano2014$map, legend = FALSE, axes = FALSE, box = FALSE)
+#legend(1,1, legend = levels(SC_Rosignano2014$map) , title = "Classi", 
+#horiz = TRUE,  bty = "n")
 
 
 #************ Validation **************
