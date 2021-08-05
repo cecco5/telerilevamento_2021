@@ -1,13 +1,13 @@
 #R_code_exam_project.r
 
 #------------------------------------------------------------
-#PROGETTO ESAME FINALE TELERILEVAMENTO GEOECOLOGICO
+#PROGETTO ESAME FINALE TELERILEVAMENTO GEOECOLOGICO: ANALISI IMMAGINI LANDSAT 8 - CASTIGLIONCELLO (LI)
 
 # Summary
 #1  Scaricamento + IMPORT immagini satellitari Toscana, dati Landsat 8 OLI-TIRS Collection2 Livello2
-#2  Classificazione land cover attraverso package RStoolbox supervised e unsupervised classification methods
-#3  
-#4  NDVI analisi multitemporale
+#2  Classificazione e confronto land cover supervised e unsupervised classification methods (package RStoolbox)
+#3  Indice di vegetazione NDVI e analisi multi-temporale
+#4  
 
 
 #----------------------------------------------------------------
@@ -26,7 +26,7 @@ library(rgdal)
 
 
 
-#1 IMPORTAZIONE IMMAGINI TOSCANA TELERILEVATE DA SISTEMA LANDSAT 8 OLI-TIRS COLLECTION 2 LEVEL 2
+#1 IMPORT IMMAGINI TOSCANA TELERILEVATE DA SISTEMA LANDSAT 8 OLI-TIRS COLLECTION 2 LEVEL 2
 
 
 # Bande Landsat
@@ -78,7 +78,7 @@ s2021 <- stack(list2021)
 
 #------------------------------------------------------------------------------------#
 
-# 2.1 Unsupervised classification with unsuperClass function: non assegno un valore ai pixel per determinare le classi ma il software raggruppa gruppi di pixel con valori di riflettanza simili
+# 2 Unsupervised classification with unsuperClass function: non assegno un valore ai pixel per determinare le classi ma il software raggruppa gruppi di pixel con valori di riflettanza simili
 
 #plotRGB(s2014,4,3,2,stretch="hist") 
 #e <- drawExtent(show=TRUE, col="red") #estensione area di Rosignano Marittimo (LI), oggetto Extent
@@ -166,7 +166,7 @@ names(Rosignano2014) <- c("ca","blue","green","red","nir","swir1","swir2")
 train_utm <- spTransform(train.shp,crs(Rosignano2014))
 
 
-# plot Rosignano2014 con i punti del train_data della classificazione
+# plot Rosignano2014$nir con i punti del train_data della classificazione
 plot(Rosignano2014$nir)
 # add train_data to plot
 points(train_utm,
@@ -184,6 +184,25 @@ points(train_utm,
 set.seed(50)
 SC_Rosignano2014 <- superClass(Rosignano2014, trainData = train_utm, responseCol = "classe", 
 model = "rf", tuneLength = 1, trainPartition = 0.7)
+
+#model : rf random forest, mlc maximum likelihood
+
+#SuperClass performs the following steps:
+
+#    Ensure non-overlap between training and validation data. This is neccesary to avoid biased performance estimates. A minimum distance (minDist) in pixels can be provided to enforce a given distance between training and validation data.
+
+  #  Sample training coordinates. If trainData (and valData if present) are SpatialPolygonsDataFrames superClass will calculate the area per polygon and sample nSamples locations per class within these polygons. The number of samples per individual polygon scales with the polygon area, i.e. the bigger the polygon, the more samples.
+
+  #  Split training/validation If valData was provided (reccomended) the samples from these polygons will be held-out and not used for model fitting but only for validation. If trainPartition is provided the trainingPolygons will be divided into training polygons and validation polygons.
+
+   # Extract raster data The predictor values on the sample pixels are extracted from img
+
+   # Fit the model. Using caret::train on the sampled training data the model will be fit, including parameter tuning (tuneLength) in kfold cross-validation. polygonBasedCV=TRUE will define cross-validation folds based on polygons (reccomended) otherwise it will be performed on a per-pixel basis.
+
+  #  Predict the classes of all pixels in img based on the final model.
+
+   # Validate the model with the independent validation data.
+
 
 #plot(SC_Rosignano2014$map, legend = FALSE, axes = FALSE, box = FALSE)
 #legend(1,1, legend = levels(SC_Rosignano2014$map) , title = "Classi", 
@@ -260,7 +279,7 @@ model = "rf", tuneLength = 1, trainPartition = 0.7)
 #   5       PINO MARITTIMO
 
 
-
+#DALL'ATTRIBUTO VALIDATION DELL'OGGETTO superClass si osserva che l'accuratezza del modello di classificazione adottato è di 0.8 su una scala da 0 a 1, dunque piuttosto alto
 
 
 
