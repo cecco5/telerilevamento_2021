@@ -307,6 +307,7 @@ pca_2021 <- rasterPCA(Rosignano2021)
 #Cumulative Proportion  9.994450e-01 9.999259e-01 1.000000e+00
 #------------------------------------------------
 
+#APPLICAZIONE MODELLO DI CLASSIFICAZIONE 2014 AL 2021: predict
 
 pca12_2021 <- pca_2021$map$PC1+pca_2021$map$PC2 # Comp.1 + Comp.2 = 98.5% of variability
 #levelplot(pca12_2021)
