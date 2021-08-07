@@ -6,8 +6,8 @@
 # Summary
 #1  Scaricamento + IMPORT immagini satellitari Toscana, dati Landsat 8 OLI-TIRS Collection2 Livello2
 #2  Classificazione e confronto land cover supervised e unsupervised classification methods (package RStoolbox)
-#3  Indice di vegetazione NDVI e analisi multi-temporale
-#4  
+#3  Indice di vegetazione NDVI e analisi multi-temporale 2014 - 2021 della zona d'interesse
+ 
 
 
 #----------------------------------------------------------------
@@ -279,9 +279,51 @@ model = "rf", tuneLength = 1, trainPartition = 0.7)
 #   5       PINO MARITTIMO
 
 
-#DALL'ATTRIBUTO VALIDATION DELL'OGGETTO superClass si osserva che l'accuratezza del modello di classificazione adottato è di 0.8 su una scala da 0 a 1, dunque piuttosto alto
+#DALL'ATTRIBUTO VALIDATION DELL'OGGETTO superClass si osserva che l'accuratezza del modello di classificazione adottato è di 0.8 su una scala da 0 a 1
+
+#APPLICHIAMO LO STESSO MODELLO ALLE IMMAGINI DEL 2021
+#e <- extent(612410.9,617274,4804437,4810342) #estensione area di Rosignano
+
+#raster Rosignano 2021
+Rosignano2021 <- crop(s2021,e)
+
+#salviamo il raster su disco, nella directory di lavoro
+writeRaster(Rosignano2021,"Rosignano_landsat8_2021") #estensione .grd e .gri
 
 
+set.seed(50)
+pca_2021 <- rasterPCA(Rosignano2021)
 
+#-----------------------------------------------
+#> summary(pca_2021$model)
+#Importance of components:
+#                             Comp.1       Comp.2       Comp.3       Comp.4
+#Standard deviation     5812.0078009 2516.1305269 732.53029770 3.533915e+02
+#Proportion of Variance    0.8267662    0.1549518   0.01313353 3.056627e-03
+#Cumulative Proportion     0.8267662    0.9817180   0.99485151 9.979081e-01
+#                             Comp.5       Comp.6       Comp.7
+#Standard deviation     2.505874e+02 1.401603e+02 5.503710e+01
+#Proportion of Variance 1.536912e-03 4.808177e-04 7.413809e-05
+#Cumulative Proportion  9.994450e-01 9.999259e-01 1.000000e+00
+#------------------------------------------------
+
+
+pca12_2021 <- pca_2021$map$PC1+pca_2021$map$PC2 # Comp.1 + Comp.2 = 98.5% of variability
+#levelplot(pca12_2021)
+
+#applico il modello di classificazione non supervisionata applicato per le immagini del 2014 a quelle del 2021 (senza di fatto rilanciare la classificazione).
+class2021_3 <- predict(class2014_3,pca12_2021) #3 classi
+class2021_6 <- predict(class2014_6,pca12_2021) #6 classi
+
+#confronto tra la classificazione del 2014 e la previsione applicando lo stesso modello al 2021, senza dunque lanciare nuovamente la funzione di classificazione
+#3 classi
+#par(mfrow=c(2,1))
+#plot(class2014_3$map)
+#plot(class2021_3)
+
+#6 classi
+#par(mfrow=c(2,1))
+#plot(class2014_6$map)
+#plot(class2021_6)
 
 
