@@ -359,30 +359,39 @@ library(rgdal)
 list2014 <- list.files(pattern="20140806")
 s2014 <- stack(list2014)   
 
-#2021
-list2021 <- list.files(pattern="20210302")
-s2021 <- stack(list2021)
 
-#trasformo in RasterBrick
-Rosignano2014 <- brick(s2014)
-Rosignano2021 <- brick(s2021)
+#2020
+list2020 <- list.files(pattern="20200822")
+s2020 <- stack(list2020)
+
+#ritaglio l'area di Rosignano
+e <- extent(612410.9,617274,4804437,4810342) #estensione area di Rosignano
+
+#raster Rosignano 2014
+s2014e <- crop(s2014,e)
+s2020e <- crop(s2020,e)
+
+
+#Rinomino i miei raster multibanda
+Rosignano2014 <- s2014e
+Rosignano2020 <- s2020e
 
 #Rinomino le bande
 names(Rosignano2014) <- c("ca","blue","green","red","nir","swir1","swir2")
-names(Rosignano2021) <- c("ca","blue","green","red","nir","swir1","swir2")
+names(Rosignano2020) <- c("ca","blue","green","red","nir","swir1","swir2")
 
 # -1<=NDVI<=+1
 
 #NDVI 2014
 ndvi_2014 <- (Rosignano2014$nir-Rosignano2014$red)/(Rosignano2014$nir+Rosignano2014$red)
 
-#NDVI 2021
-ndvi_2021 <- (Rosignano2021$nir-Rosignano2021$red)/(Rosignano2021$nir+Rosignano2021$red)
+#NDVI 2020
+ndvi_2020 <- (Rosignano2020$nir-Rosignano2020$red)/(Rosignano2020$nir+Rosignano2020$red)
 
-cls <- colorRampPalette(viridis(12)) (100)
+cls <- colorRampPalette(c("blue","white","red")) (100)
 par(mfrow=c(1,2))
 plot(ndvi_2014,col=cls, main="NDVI 2014")
-plot(ndvi_2021,col=cls, main="NDVI 2021")
+plot(ndvi_2020,col=cls, main="NDVI 2020")
 
 
 
