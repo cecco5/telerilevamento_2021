@@ -328,7 +328,7 @@ class2021_6 <- predict(class2014_6,pca12_2021) #6 classi
 #plot(class2021_6)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------#
-
+#ANALISI MULTITEMPORALE NDVI AGOSTO 2014 - 2020
 
 
 setwd("C:/lab/esame")
@@ -340,11 +340,6 @@ library(gridExtra)
 library(viridis)
 library(rasterVis)
 library(rgdal)
-
-
-
-#1 IMPORT IMMAGINI TOSCANA TELERILEVATE DA SISTEMA LANDSAT 8 OLI-TIRS COLLECTION 2 LEVEL 2
-
 
 # Bande Landsat
 # B1: CA
