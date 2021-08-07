@@ -100,7 +100,7 @@ Rosignano2014 <- crop(s2014,e)
 writeRaster(Rosignano2014,"Rosignano_landsat8_2014") #estensione .grd e .gri
 
 
-# UnsuperClass classification based on kmeans algorithm
+# UnsuperClass classification based on k-means algorithm
 # Per cogliere il massimo della variabilità dai nostri dati operiamo una PCA
 
 set.seed(50)
@@ -152,7 +152,7 @@ class2014_6 <- unsuperClass(pca12_2014, nClasses=6) #6 classi
 # pino marittimo
 
 #rgdal required
-train.shp <- readOGR(dsn="C:/lab/esame",layer="train_data")
+train.shp <- readOGR(dsn="C:/lab/esame",layer="train_data") #train data
 
 Rosignano2014 <- brick("Rosignano_landsat8_2014.grd") #RasterBrick
 #> crs(Rosignano2014)
@@ -307,16 +307,16 @@ pca_2021 <- rasterPCA(Rosignano2021)
 #Cumulative Proportion  9.994450e-01 9.999259e-01 1.000000e+00
 #------------------------------------------------
 
-#APPLICAZIONE MODELLO DI CLASSIFICAZIONE 2014 AL 2021: predict
+#APPLICAZIONE MODELLO DI CLASSIFICAZIONE 2014 AL 2021: predict.unsuperClass (RStoolbox)
 
-pca12_2021 <- pca_2021$map$PC1+pca_2021$map$PC2 # Comp.1 + Comp.2 = 98.5% of variability
+pca12_2021 <- pca_2021$map$PC1+pca_2021$map$PC2 # Comp.1 + Comp.2 = 98% of variability
 #levelplot(pca12_2021)
 
-#applico il modello di classificazione non supervisionata applicato per le immagini del 2014 a quelle del 2021 (senza di fatto rilanciare la classificazione).
+#applico il modello di classificazione non supervisionata (K-means) applicato per le immagini del 2014 a quelle del 2021 (senza di fatto rilanciare la classificazione).
 class2021_3 <- predict(class2014_3,pca12_2021) #3 classi
 class2021_6 <- predict(class2014_6,pca12_2021) #6 classi
 
-#confronto tra la classificazione del 2014 e la previsione applicando lo stesso modello al 2021, senza dunque lanciare nuovamente la funzione di classificazione
+#confronto tra la classificazione del 2014 e la previsione applicando lo stesso modello al 2021
 #3 classi
 #par(mfrow=c(2,1))
 #plot(class2014_3$map)
@@ -326,5 +326,13 @@ class2021_6 <- predict(class2014_6,pca12_2021) #6 classi
 #par(mfrow=c(2,1))
 #plot(class2014_6$map)
 #plot(class2021_6)
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+
+
+
+
+
 
 
