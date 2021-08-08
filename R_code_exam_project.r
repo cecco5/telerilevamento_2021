@@ -341,6 +341,7 @@ library(viridis)
 library(rasterVis)
 library(rgdal)
 
+
 # Bande Landsat
 # B1: CA
 # B2: BLU
@@ -384,9 +385,119 @@ ndvi_2014 <- (Rosignano2014$nir-Rosignano2014$red)/(Rosignano2014$nir+Rosignano2
 ndvi_2020 <- (Rosignano2020$nir-Rosignano2020$red)/(Rosignano2020$nir+Rosignano2020$red)
 
 cls <- colorRampPalette(c("blue","white","red")) (100)
-par(mfrow=c(1,2))
-plot(ndvi_2014,col=cls, main="NDVI 2014")
-plot(ndvi_2020,col=cls, main="NDVI 2020")
+#par(mfrow=c(1,2))
+#plot(ndvi_2014,col=cls, main="NDVI 2014")
+#plot(ndvi_2020,col=cls, main="NDVI 2020")
+
+
+#CALCOLO LA DIFFERENZA PER EVIDENZIARE LE AREE CHE HANNO SUBITO UNA VARIAZIONE 
+
+ndiv_diff <- ndvi_2014-ndvi_2020
+#plot(ndiv_diff,col=cls,main="NDVI variation August 2014- August 2020")
+
+#DIFFERENZA DA AGGIUNGERE
+#ora mi chiedo quale è stata la differenza tra le due epoche
+#diff <- dvi1-dvi2
+#cl2 <- colorRampPalette(c("blue","white","red")) (100)
+#plot(diff,col=cl2,main="DVI difference"
+
+
+#ISTOGRAMMA DI DISTRIBUZIONE DEI VALORI DI NDVI
+# view distribution of NDVI values
+par(mfrow=c(2,1))
+hist(ndvi_2014,
+  main = "NDVI distribution 2014",
+  col = "springgreen",
+  xlim=c(-1,1),
+  ylim=c(0,8000),
+  xlab = "NDVI Index Value")
+  
+hist(ndvi_2020,
+  main = "NDVI distribution 2020",
+  col = "blue",
+  xlim=c(-1,1),
+  ylim=c(0,8000),
+  xlab = "NDVI Index Value")
+  
+
+#funzione spectralIndices (RStoolbox) per il calcolo del NDWI2 = normalized difference water index, utile per osservare il contenuto di acqua delle foglie.
+#insieme al NDVI, questi due indici possono fornire indicazioni riguardo lo stato di salute della vegetazione e il livello di siccità nell'area
+#NDWI2=(nir - swir2)/(nir + swir2)
+
+
+#osserviamo i due indici a confronto nell'area di interesse in agosto 2020 e osserviamo la correlazione che intercorre tra loro con la funzione pairs
+indici_2020 <- spectralIndices(Rosignano2020,blue="blue",green="green",red="red",nir="nir",swir2="swir2",indices=c("NDVI","NDWI2"))
+plot(indici_2020, col=cls)
+
+#si puà già osservare un'alta correlazione tra i due valori in quanto entrambi rilevano comunque lo stato di salute della vegetazione, in rosso.
+pairs(indici_2020) #Coefficiente di correlazione pari a 0.98, forte correlazione positiva.
+
+#restringendo l'area di interesse alla zona boscosa a nord del paese (Poggio Pelato 378 m s.l.m.) possiamo osservare meglio lo stato della vegetazione e interpretare l'NDVI 
+#della macchia
+
+#e <- drawExtent(show=TRUE, col="red") #estensione area di Poggio Pelato
+#> e
+#class      : Extent
+#xmin       : 615047.4
+#xmax       : 616789.3
+#ymin       : 4808530
+#ymax       : 4809902
+
+poggio_2014 <- crop(Rosignano2014,e)
+writeRaster(poggio_2014,"poggio_pelato_landsat8_2014")
+poggio_2020 <- crop(Rosignano2020,e)
+writeRaster(poggio_2020,"poggio_pelato_landsat8_2020")
+
+indici_poggio_2014 <- spectralIndices(poggio_2014,blue="blue",green="green",red="red",nir="nir",swir2="swir2",indices=c("NDVI","NDWI2"))
+indici_poggio_2020 <- spectralIndices(poggio_2020,blue="blue",green="green",red="red",nir="nir",swir2="swir2",indices=c("NDVI","NDWI2"))
+
+#alta correlazione tra NDVI e NDWI2
+pairs(indici_poggio_2014) 
+pairs(indici_poggio_2020)
+
+#ISTOGRAMMA DI DISTRIBUZIONE DEI VALORI DI NDVI
+# view distribution of NDVI values
+par(mfrow=c(2,1))
+hist(indici_poggio_2014$NDVI,
+  main = "NDVI distribution 2014 Poggio Pelato",
+  col = "springgreen",
+  xlim=c(0,0.5),
+  ylim=c(0,1000),
+  xlab = "NDVI Index Value")
+  
+hist(indici_poggio_2020$NDVI,
+  main = "NDVI distribution 2020 Poggio Pelato",
+  col = "blue",
+  xlim=c(0,0.5),
+  ylim=c(0,1000),
+  xlab = "NDVI Index Value")
+
+
+
+#I VALORI DI NDVI SIA NEL 2014 CHE NEL 2020 SI ASSESTANO TRA 0 E 0.5, CIO' INDICA UNA VIGORIA VEGETALE PIUTTOSTO BASSA DELLA MACCHIA MEDITERRANEA IN QUESTA ZONA
+
+#> indici_poggio_2014
+#class      : RasterBrick
+#dimensions : 46, 58, 2668, 2  (nrow, ncol, ncell, nlayers)
+#resolution : 30, 30  (x, y)
+#extent     : 615045, 616785, 4808535, 4809915  (xmin, xmax, ymin, ymax)
+#crs        : +proj=utm +zone=32 +datum=WGS84 +units=m +no_defs
+#source     : memory
+#names      :        NDVI,       NDWI2
+#min values :  0.14352991, -0.03370653
+#max values :   0.4855575,   0.4243759
+
+
+#> indici_poggio_2020
+#class      : RasterBrick
+#dimensions : 46, 58, 2668, 2  (nrow, ncol, ncell, nlayers)
+#resolution : 30, 30  (x, y)
+#extent     : 615045, 616785, 4808535, 4809915  (xmin, xmax, ymin, ymax)
+#crs        : +proj=utm +zone=32 +datum=WGS84 +units=m +no_defs
+#source     : memory
+#names      :        NDVI,       NDWI2
+#min values : 0.108313131, 0.009376493
+#max values :   0.4655710,   0.4144954
 
 
 
