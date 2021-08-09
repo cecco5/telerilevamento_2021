@@ -327,6 +327,65 @@ class2021_6 <- predict(class2014_6,pca12_2021) #6 classi
 #plot(class2014_6$map)
 #plot(class2021_6)
 
+#ANDIAMO A CALCOLARE LE FREQUENZE PER LE 3 CLASSI NEGLI ANNI 2014 E 2021 OTTENUTE CON LA CLASSIFICAZIONE NON SUPERVISIONATA E CONFRONTIAMOLE 
+f2014<-freq(class2014_3$map)
+
+#> f2014
+#     value count
+#VEGETAZIONE        [1,]     1 15048
+#ACQUA              [2,]     2 10561
+#AREA ANTROPIZZATA  [3,]     3  6305
+
+#> prop<-f2014/(ncell(class2014_3$map))
+#> prop
+#            value     count
+#[1,] 3.133421e-05 0.4715172
+#[2,] 6.266842e-05 0.3309206
+#[3,] 9.400263e-05 0.1975622
+
+f2021<-freq(class2021_3)
+# STESSE CLASSI
+#> f2021
+#     value count
+#[1,]     1 15588
+#[2,]     2 10959
+#[3,]     3  5367
+
+#> prop2
+#            value     count
+#[1,] 3.133421e-05 0.4884377
+#[2,] 6.266842e-05 0.3433916
+#[3,] 9.400263e-05 0.1681707
+
+
+
+#VETTORE che chiamo cover
+cover <- c("VEGETAZIONE","ACQUA","AREA ANTROPIZZATA")
+percent_2014 <- c(47.15,33.09,19.76)
+percent_2021 <- c(48.84,34.34,16.82)
+
+#così ho definito le 3 colonne
+#creo il dataframe con la funzione data.frame( )
+
+percentages <- data.frame(cover, percent_2014, percent_2021) 
+
+#adesso usiamo ggplot per graficare
+p2014 <- ggplot(percentages, aes(x=cover, y=percent_2014, color=cover)) + geom_bar(stat="identity", fill="blue") #color si riferisce a quale oggetto vogliamo discriminare nel grafico, nel nostro caso le 2 classi
+p2021 <- ggplot(percentages, aes(x=cover, y=percent_2021, color=cover)) + geom_bar(stat="identity", fill="red")
+
+#geom_bar -> perchè vogliamo delle barre nel grafico che indichino le percentuali, stat="identity" -> uso i dati proprio come li ho messi nella funzione
+
+#per mettere entrambi in una pagina, uso grid.arrange
+grid.arrange(p2014,p2021,nrow=1)
+
+
+
+par(mfrow=c(2,1))
+plot(class2014_3$map, main="2014 Unsupervised Classification")
+plot(class2021_3, main="2021 Unsupervised Classification (2014 model)")
+
+
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------#
 #ANALISI MULTITEMPORALE NDVI AGOSTO 2014 - 2020
 
