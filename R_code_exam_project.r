@@ -131,8 +131,10 @@ class2014_3 <- unsuperClass(pca12_2014, nClasses=3) #3 classi per distinguere pr
 #plotRGB(Rosignano2014,4,3,2,stretch="hist")
 #plot(class2014_3$map)
 
-#Dal confronto con l'immagine RGB si apprezza la differenza tra le 3 classi generate, notando anche la presenza di 3 specchi d'acqua non individuabili altrimenti.
-#Aumentando il numero di classi della funzione, è possibile osservare come l'algoritmo riesca a individuare più elementi, tra cui una diversificazione maggiore della vegetazione
+#Dal confronto con l'immagine RGB si apprezza la differenza tra le 3 classi generate, 
+#notando anche la presenza di 3 specchi d'acqua non individuabili altrimenti.
+#Aumentando il numero di classi della funzione, è possibile osservare come l'algoritmo riesca 
+#a individuare più elementi, tra cui una diversificazione maggiore della vegetazione
 set.seed(50)
 class2014_6 <- unsuperClass(pca12_2014, nClasses=6) #6 classi
 #par(mfrow=c(1,2))
@@ -439,9 +441,11 @@ names(Rosignano2020) <- c("ca","blue","green","red","nir","swir1","swir2")
 
 #NDVI 2014
 ndvi_2014 <- (Rosignano2014$nir-Rosignano2014$red)/(Rosignano2014$nir+Rosignano2014$red)
+ndvi_2014 <- spectralIndices(Rosignano2014,blue="blue",green="green",red="red",nir="nir",swir2="swir2",index="NDVI")
 
 #NDVI 2020
 ndvi_2020 <- (Rosignano2020$nir-Rosignano2020$red)/(Rosignano2020$nir+Rosignano2020$red)
+ndvi_2020 <- spectralIndices(Rosignano2020,blue="blue",green="green",red="red",nir="nir",swir2="swir2",index="NDVI")
 
 cls <- colorRampPalette(c("blue","white","red")) (100)
 #par(mfrow=c(1,2))
@@ -449,16 +453,12 @@ cls <- colorRampPalette(c("blue","white","red")) (100)
 #plot(ndvi_2020,col=cls, main="NDVI 2020")
 
 
-#CALCOLO LA DIFFERENZA PER EVIDENZIARE LE AREE CHE HANNO SUBITO UNA VARIAZIONE 
+#CALCOLO LA DIFFERENZA PER EVIDENZIARE LE AREE CHE HANNO SUBITO UNA VARIAZIONE MAGGIORE
 
 ndiv_diff <- ndvi_2014-ndvi_2020
 #plot(ndiv_diff,col=cls,main="NDVI variation August 2014- August 2020")
 
-#DIFFERENZA DA AGGIUNGERE
-#ora mi chiedo quale è stata la differenza tra le due epoche
-#diff <- dvi1-dvi2
-#cl2 <- colorRampPalette(c("blue","white","red")) (100)
-#plot(diff,col=cl2,main="DVI difference"
+
 
 
 #ISTOGRAMMA DI DISTRIBUZIONE DEI VALORI DI NDVI
