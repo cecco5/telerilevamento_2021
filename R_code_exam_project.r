@@ -20,7 +20,7 @@ library(raster)
 library(RStoolbox)
 library(ggplot2)
 library(gridExtra)
-library(viridis)
+#library(viridis)
 library(rasterVis)
 library(rgdal)
 
@@ -40,6 +40,7 @@ library(rgdal)
 
 #2014
 list2014 <- list.files(pattern="20140806")
+lapply(list2014,raster)
 s2014 <- stack(list2014)                                        #raster multibanda 2014, oggetto RasterStack
 
 
@@ -66,11 +67,13 @@ s2019 <- stack(list2019)
 
 #2020
 list2020 <- list.files(pattern="20200822")
-s2020 <- stack(list2020)
+import2020<-lapply(list2020,raster)
+s2020 <- stack(import2020)
 
 #2021
 list2021 <- list.files(pattern="20210302")
-s2021 <- stack(list2021)
+import_2021<-lapply(list2021,raster)
+s2021 <- stack(import_2021)
 # plotRGB(s2021, 4,3,2, stretch="hist")
 
 #plot 2014 and 2021 images
